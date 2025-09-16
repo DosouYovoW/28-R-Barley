@@ -1,9 +1,0 @@
----
-title: "weather data analysis"
-format: html
-editor: visual
----
-
-# Load packages
-
-
