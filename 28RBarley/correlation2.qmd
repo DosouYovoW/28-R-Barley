@@ -1,0 +1,251 @@
+---
+title: "Correlation"
+format: html
+editor: visual
+---
+
+```{r}
+data_int$predicted_lodging <- predict(reg_mod_int_yield_lodging, newdata = data_int)
+data_int$predicted_plant_height <- predict(reg_mod_int_yield_plantheight, newdata = data_int)
+data_int$predicted_yield_buac <- predict(reg_mod_int_yield_buacre, newdata = data_int)
+data_int$predicted_net_return <- predict(reg_mod_int_yield_economic, newdata = data_int)
+data_int <- data_int %>%  mutate(predicted_lodging = if_else(predicted_lodging <0, 0, predicted_lodging)) 
+```
+
+
+
+```{r}
+data_int %>% 
+  mutate(predicted_lodging = if_else(predicted_lodging <0, 0, predicted_lodging)) %>% 
+  ggplot(aes(predicted_lodging, predicted_yield_buac, color = as.factor(year)))+
+  geom_point(size = 3, alpha = 0.1)+
+  geom_smooth(method = "lm", se = F, alpha = 0.3)+
+  facet_grid( . ~ location, scales = "free") + 
+  scale_color_manual(values = c("red4", "blue4", "green4"))+
+   theme_bw()+
+  theme(legend.position = "bottom")+
+  labs(y = "Predicted yield (Bu/acre)", x = "Lodging Index (%)" , subtitle = "R2: 0.26", color = "")
+ggsave("Final_Report/figure/Lodgingyield.png", width = 8, height = 5, dpi = 600)
+```
+
+
+
+
+```{r}
+data_int %>% 
+  ggplot(aes(predicted_plant_height, predicted_yield_buac, color = as.factor(year)))+
+  geom_point(size = 3, alpha = 0.1)+
+  geom_smooth(method = "lm", se = F, alpha = 0.3)+
+  facet_grid( . ~ location, scales = "free") + 
+  scale_color_manual(values = c("red4", "blue4", "green4"))+
+   theme_bw()+
+  theme(legend.position = "bottom")+
+  labs(y = "Predicted yield (Bu/acre)", x = "Predicted Plant Height at Maturity (cm)", subtitle = "R2: 0.23", color = "")
+ggsave("Final_Report/figure/Predheightyield.png", width = 8, height = 5, dpi = 600)
+```
+
+
+
+
+```{r}
+# Plot with predicted regression line from model
+data_int %>% 
+  group_by(location, PGR_growth_stage) %>% 
+  summarise(mean_r = mean(predicted_yield_buac)) %>% 
+  ggplot(aes(x = PGR_growth_stage, y = mean_r #, color = as.factor(year)
+             )) +
+  geom_bar(stat = "identity", position = position_dodge(width = 0.8))+
+  facet_grid(. ~ location, scales = "free") +
+  geom_text(
+      aes(label = round(mean_r, 0)),
+      position = position_dodge(width = 0.8),
+      vjust = -0.5,
+      size = 3
+    ) +
+  scale_color_manual(values = c("red4", "blue4", "green4")) +
+  theme_bw() +
+  theme(legend.position = "bottom", axis.text.x = element_text(angle = 90)) +
+  labs(
+    y = "Predicted yield (Bu/acre)",
+    x = "",
+    subtitle = "",
+    color = ""
+  )+
+  coord_cartesian(ylim = c(0,250))
+
+ggsave("Final_Report/figure/heightyield.png", width = 8, height = 5, dpi = 600)
+```
+
+```{r}
+data_plot <- data_int %>%
+#  mutate(predicted_lodging = if_else(predicted_lodging <0, 0, predicted_lodging)) %>% 
+  group_by(location, PGR_growth_stage) %>%
+  summarise(mean_r = mean(predicted_yield_buac, na.rm = TRUE), .groups = "drop") %>%
+  group_by(location) %>%
+  mutate(
+    control_mean = if ("Control" %in% PGR_growth_stage) {
+      mean_r[PGR_growth_stage == "Control"]
+    } else {
+      NA_real_
+    },
+    improvement_pct = round(((mean_r - control_mean  ) / control_mean) * 100, 1),
+    label_text = ifelse(is.na(improvement_pct),
+                        round(mean_r, 2),
+                        paste0(round(mean_r, 2), "\n(", improvement_pct, "%)"))
+  )
+# Plot
+ggplot(data_plot, aes(x = PGR_growth_stage, y = mean_r)) +
+  geom_bar(stat = "identity", position = position_dodge(width = 0.8)) +
+  facet_grid(. ~ location, scales = "free") +
+  geom_text(
+    aes(label = label_text),
+    position = position_dodge(width = 0.8),
+    vjust = -0.5,
+    size = 3
+  ) +
+  theme_bw() +
+  theme(
+    legend.position = "bottom",
+    axis.text.x = element_text(angle = 90, vjust = 0.5)
+  ) +
+  labs(
+    y = "Predicted lodging (%)",
+    x = "",
+    subtitle = "Values with % improvement vs control (No_PGR)",
+    color = ""
+  ) +
+  coord_cartesian(ylim = c(0, 300))
+
+
+ggsave("Final_Report/figure/yield_improvement.png", width = 8, height = 5, dpi = 600)
+```
+
+```{r}
+data_plot <- data_int %>%
+  mutate(predicted_lodging = if_else(predicted_lodging <0, 0, predicted_lodging)) %>% 
+  group_by(location, PGR_growth_stage) %>%
+  summarise(mean_r = mean(predicted_lodging, na.rm = TRUE), .groups = "drop") %>%
+  group_by(location) %>%
+  mutate(
+    control_mean = if ("Control" %in% PGR_growth_stage) {
+      mean_r[PGR_growth_stage == "Control"]
+    } else {
+      NA_real_
+    },
+    improvement_pct = round(((control_mean - mean_r) / control_mean) * 100, 1),
+    label_text = ifelse(is.na(improvement_pct),
+                        round(mean_r, 2),
+                        paste0(round(mean_r, 2), "\n(", improvement_pct, "%)"))
+  )
+# Plot
+ggplot(data_plot, aes(x = PGR_growth_stage, y = mean_r)) +
+  geom_bar(stat = "identity", position = position_dodge(width = 0.8)) +
+  facet_grid(. ~ location, scales = "free") +
+  geom_text(
+    aes(label = label_text),
+    position = position_dodge(width = 0.8),
+    vjust = -0.5,
+    size = 3
+  ) +
+  theme_bw() +
+  theme(
+    legend.position = "bottom",
+    axis.text.x = element_text(angle = 90, vjust = 0.5)
+  ) +
+  labs(
+    y = "Predicted lodging (%)",
+    x = "",
+    subtitle = "Values with % improvement vs control (No_PGR)",
+    color = ""
+  ) +
+  coord_cartesian(ylim = c(0, 7))
+
+
+ggsave("Final_Report/figure/lodging_improvement.png", width = 8, height = 5, dpi = 600)
+```
+```{r}
+data_plot <- data_int %>%
+#  mutate(predicted_lodging = if_else(predicted_lodging <0, 0, predicted_lodging)) %>% 
+  group_by(location, PGR_growth_stage) %>%
+  summarise(mean_r = mean(predicted_net_return, na.rm = TRUE), .groups = "drop") %>%
+  group_by(location) %>%
+  mutate(
+    control_mean = if ("Control" %in% PGR_growth_stage) {
+      mean_r[PGR_growth_stage == "Control"]
+    } else {
+      NA_real_
+    },
+    improvement_pct = round(((mean_r - control_mean  ) / control_mean) * 100, 1),
+    label_text = ifelse(is.na(improvement_pct),
+                        round(mean_r, 2),
+                        paste0(round(mean_r, 2), "\n(", improvement_pct, "%)"))
+  )
+# Plot
+ggplot(data_plot, aes(x = PGR_growth_stage, y = mean_r)) +
+  geom_bar(stat = "identity", position = position_dodge(width = 0.8)) +
+  facet_grid(. ~ location, scales = "free") +
+  geom_text(
+    aes(label = label_text),
+    position = position_dodge(width = 0.8),
+    vjust = -0.5,
+    size = 3
+  ) +
+  theme_bw() +
+  theme(
+    legend.position = "bottom",
+    axis.text.x = element_text(angle = 90, vjust = 0.5)
+  ) +
+  labs(
+    y = "Predicted net return ($/acre)",
+    x = "",
+    subtitle = "Values with % improvement vs control (No_PGR)",
+    color = ""
+  ) +
+  coord_cartesian(ylim = c(0, 1500))
+
+
+ggsave("Final_Report/figure/predicted_net_return.png", width = 8, height = 5, dpi = 600)
+```
+
+```{r}
+net_return_overall <- lsd_test_f2_05(
+  data_int %>%
+    mutate(treatment = pgr_trt_name,
+      outcome = net_return)
+)
+net_return_overall
+writexl::write_xlsx(net_return_overall, "Final_Report/Data/net_return_overall.xlsx")
+```
+
+```{r}
+net_return_falher <- lsd_test_f2_05(
+  data_int %>%
+    filter(location == "Falher") %>% 
+    mutate(treatment = pgr_trt_name,
+      outcome = net_return)
+)
+net_return_falher
+writexl::write_xlsx(net_return_falher, "Final_Report/Data/net_return_falher.xlsx")
+```
+
+```{r}
+net_return_Vermilion <- lsd_test_f2_05(
+  data_int %>%
+    filter(location == "Vermilion") %>% 
+    mutate(treatment = pgr_trt_name,
+      outcome = net_return)
+)
+net_return_Vermilion
+writexl::write_xlsx(net_return_Vermilion, "Final_Report/Data/net_return_Vermilion.xlsx")
+```
+
+```{r}
+net_return_Lethbridge <- lsd_test_f2_05(
+  data_int %>%
+    filter(location == "Lethbridge") %>% 
+    mutate(treatment = pgr_trt_name,
+      outcome = net_return)
+)
+net_return_Lethbridge
+writexl::write_xlsx(net_return_Lethbridge, "Final_Report/Data/net_return_Lethbridge.xlsx")
+```

@@ -1,0 +1,52 @@
+---
+title: "Untitled"
+format: html
+editor: visual
+---
+
+## Load librarie
+```{r}
+library(tidyverse)
+library(tidymodels)
+library(readxl)
+library(janitor)
+library(plotly)
+library(corrr)
+library(sjPlot)
+library(lmerTest)  # Use lmerTest to get p-values
+library(broom.mixed)
+library(forcats)
+library(stringr)
+library(broom)
+library(GGally)
+library(ggpubr)
+library(patchwork)
+library(agricolae)
+library(gander)
+```
+
+
+## Load data
+```{r}
+data <- readxl::read_excel("data/All Year 28 R Barley trial data.xlsx", sheet = "Overall_2") %>% 
+  clean_names() %>% 
+  filter(!(location == "Falher" & year == 2024)) %>% 
+  mutate(yield_adj_to_13_5_percent = as.numeric(yield_adj_to_13_5_percent),
+         yield_adj_to_13_5_percent_bu = as.numeric(yield_adj_to_13_5_percent_bu),
+         avg_height_at_phys_maturity = as.numeric(avg_height_at_phys_maturity),
+         lodging_index_2 = as.numeric(lodging_index_2),
+         lodging_index_3 = as.numeric(lodging_index_3),
+         tkw_avg_adjusted_to_13_5_percent_moisture = as.numeric(tkw_avg_adjusted_to_13_5_percent_moisture),
+         ndf_percent_dm = as.numeric(ndf_percent_dm),
+         iv_d_ec_percent_dm = as.numeric(iv_d_ec_percent_dm),
+         starch_percent_dm = as.numeric(starch_percent_dm),
+         test_weight_kg_h_l = as.numeric(test_weight_kg_h_l),
+         protein_percent_dm = as.numeric(protein_percent_dm),
+         dtm = as.numeric(dtm),
+         grain_moisture_percent = as.numeric(grain_moisture_percent)) %>% 
+ # filter(cultivar != "TR18647") %>% 
+  mutate(cultivar = case_when(cultivar == "TR18647"~ "AB_Hague",
+                              .default = cultivar))
+data 
+```
+

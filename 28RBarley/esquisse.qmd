@@ -1,0 +1,65 @@
+---
+title: "Untitled"
+format: html
+editor: visual
+---
+
+# Load library
+```{r}
+library(esquisse)
+```
+
+```{r}
+esquisse::esquisser(iris)
+
+library(ggplot2)
+
+ggplot(iris) +
+ aes(x = Species, y = Sepal.Length, fill = Species) +
+ geom_bar(stat = "summary", fun = "mean") +
+ scale_fill_hue(direction = 1) +
+ theme_bw()
+library(ggplot2)
+
+ggplot(iris) +
+ aes(x = Sepal.Width, y = Petal.Width) +
+ geom_point(size = 0.5, colour = "#FFFFFF") +
+ geom_boxplot(aes(fill = Species)) +
+ scale_fill_brewer(palette = "BrBG", direction = -1) +
+ theme_bw()
+
+ggplot(iris) +
+ aes(x = Sepal.Width, y = Petal.Width) +
+ geom_point(size = 0.5, colour = "#FFFFFF") +
+ geom_boxplot(aes(fill = Species)) +
+ scale_fill_brewer(palette = "BrBG", direction = -1) +
+ theme_bw()
+)
+```
+
+```{r}
+ggplot(cleaned_data_imputed) +
+  aes(x = location, y = yield_bu_acre, fill = cultivar) +
+  geom_boxplot() +
+  scale_fill_manual(values = c("CDC_Austenson" = "yellow", 
+                               "AB_Hague" = "blue", 
+                               "Esma" = "red")) +
+  theme_bw() +
+  theme(legend.title = element_blank(), 
+        legend.position = "bottom")
+
+
+
+```
+
+
+
+```{r}
+library(GWalkR)
+```
+```{r}
+gwalkr(cleaned_data_imputed)
+```
+
+
+
