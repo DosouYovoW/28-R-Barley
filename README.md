@@ -5,3 +5,5 @@ Lodging has traditionally been a concern for feed barley production in Western C
 Overall, Moddus can be a useful tool in high-risk lodging environments such as irrigated, high-nitrogen, or tall-canopy systems but is unlikely to provide economic benefit in low-lodging dryland conditions. The project provided training opportunities for students and was widely shared through field days, extension events, and outreach activities.    
 
 **Key words**: PGR, Feed Barley, Moddus, Yield, Quality, lodging
+
+**Project Lead***: Balwinder Kumar, Wilfried Dossou-Yovo, Francois Paradis, Sheri Strydhorst, Vance Yaremko, Ken Coles, Michael Gretzinger, Randy Retziaff
