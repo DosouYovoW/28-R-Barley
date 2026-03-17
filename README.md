@@ -6,4 +6,20 @@ Overall, Moddus can be a useful tool in high-risk lodging environments such as i
 
 **Key words**: PGR, Feed Barley, Moddus, Yield, Quality, lodging
 
-**Project Lead***: Balwinder Kumar, Wilfried Dossou-Yovo, Francois Paradis, Sheri Strydhorst, Vance Yaremko, Ken Coles, Michael Gretzinger, Randy Retziaff
+**Project Lead**: Balwinder Kumar, Wilfried Dossou-Yovo, Francois Paradis, Sheri Strydhorst, Vance Yaremko, Ken Coles, Michael Gretzinger, Randy Retzlaff  
+
+**Funding Agencies**: RDAR, Alberta Grain, ABP, SaskBarley, Manitoba Crop Alliance, WGRF, Syngenta        
+
+       
+
+           
+**Result Summary**      
+
+                                                              Lodging Modeling
+<img width="4800" height="3000" alt="lodging_mixed_modeling" src="https://github.com/user-attachments/assets/5bb736be-f2b5-485b-b5b0-601f6cfc7f2f" />
+
+                                                              
+                                                              Yield Modeling
+<img width="4800" height="3000" alt="Yield_mixed_modeling_yield_bu_ac" src="https://github.com/user-attachments/assets/8b3c8dfe-54e6-4994-ad7c-862afaeaaa8c" />
+
+
